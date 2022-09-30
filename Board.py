@@ -2,13 +2,20 @@ import random
 
 class Card:
     def __init__(self, seed, number):
+        """
+        seed = "B", "C", "D", "S"
+        number = 1..10
+        """
         self.seed = seed# 1 to 10 Asso, 2 ... 7, Fante, Cavallo, Re
         self.number = number# B_astoni, C_oppe, D_enare, S_pade
     
     def __str__(self):
         return self.seed + str(self.number)
     
-    def greater(self, card): #returns FALSE if the seeds are different, or the best card 
+    def greater(self, card): 
+        """
+        returns FALSE if the seeds are different, or returns the best card 
+        """
         if self.seed != card.seed: return False
         if self.number == 1: return self
         if card.number == 1: return card
@@ -17,7 +24,10 @@ class Card:
         if self.number > card.number: return self;
         return card
     
-    def pointValue(self):
+    def pointValue(self): 
+        """
+        returnrs the point value of the card
+        """
         match self.number:
             case 1 : return 11
             case 3 : return 10
@@ -35,9 +45,8 @@ class Board:
         self.briscola = 0
         self.players = []
         self.round = 0
-        self.firstPlayer = 0
-        self.currentPlayer = 0
         self.empty = False
+        self.nextPlayer = 0
                
     def __str__(self):
         rs = "Deck cards:\n"
@@ -71,66 +80,91 @@ class Board:
         self.tableCards = []
         return winner
 
-    def setupDeck(self):
+
+    def setupDeck(self): 
+        """
+        initializes cards array and shuffles them 
+        sets the briscola as the first card
+        """
         self.cards = []
         for s in ["B", "C", "D", "S"]: 
             for x in range(1, 11):
                 self.cards.append(Card(s, x))
-        self.shuffle()
+        self.shuffle()        
+        self.briscola = self.cards.pop()
 
-    def shuffle(self):
+    def shuffle(self): 
+        """
+        randomizes cards order
+        """
         random.shuffle(self.cards)
     
     def addPlayer(self, player):
         self.players.append(player)
+        player.assign(self)
 
     def firstDeal(self):
+        """
+        Gives all players 3 cards, chooses the briscola
+        """
         for x in range(3) :      
             for p in self.players :
                 p.addCardToHand(self.cards.pop())
-        self.briscola = self.cards.pop()
 
 
     def deal(self):
-        if self.empty == 0 : 
+        """
+        Gives each player a card from the deck, if there are no more cards
+        assign the player the briscola 
+        deprecated
+        """
+        #if self.empty == 0 : 
+         #   if len(self.cards) > 0 :
+          #      for p in self.players :
+           #         if len(self.cards) > 0 :
+            #           c = self.cards.pop()
+             #           p.addCardToHandSorted(c, self.briscola.seed)
+             #       else:
+              #          p.addCardToHandSorted(self.briscola, self.briscola.seed)
+               #         self.empty += 1
+       # else: self.empty += 1
+        return 0
+
+    def draw(self):
+        """
+        returns a card from the deck or
+        returns the briscola as the last card
+        """
+        if not self.empty :
             if len(self.cards) > 0 :
-                for p in self.players :
-                    if len(self.cards) > 0 :
-                        c = self.cards.pop()
-                        p.addCardToHandSorted(c, self.briscola.seed)
-                    else:
-                        p.addCardToHandSorted(self.briscola, self.briscola.seed)
-                        self.empty += 1
-        else: self.empty += 1
+                c = self.cards.pop()
+                return c
+            else :
+                self.empty = True
+                return self.briscola
+
         
-                
-                
-    def playHand(self):
-        for p in self.players :
-            self.tableCards.append({"card":p.play(), "player":p})
+    def nextHand(self):
+        """
+        For each player, draws if necessary 
+        adds the player with it's card to the tableCards
+        finds a winner
+        """
+        n_players = len(self.players)
+        for i in range(n_players) :
+            player = self.players[(self.nextPlayer+i)%n_players]
+            if player.needsToDraw() and not self.empty : player.addCardToHandSorted(self.draw(), self.briscola.seed)
+            self.tableCards.append({"player":player, "card":player.aPlay()})
         winner = self.findHandWinner()
-        #set the player who has won as the first player of the next hand
-        i=0
-        for i in range(0, len(self.players)):
-            if self.players[(self.firstPlayer+i)%len(self.players)] != winner["player"] : continue
-            else: break
-        self.firstPlayer = (self.firstPlayer + i ) % len(self.players)
-        self.deal()
-        self.round = self.round + 1
-        
-    def playOne(self, cardN=0):
-        cp = self.currentPlayer % len(self.players)
-        self.currentPlayer += 1
-        self.tableCards.append({"card":self.players[cp].play(cardN), "player":self.players[cp]})
-        if cp != 0 and self.currentPlayer > 1 :
-            if self.findHandWinner()["player"] != self.players[cp]: 
-                self.currentPlayer+=1
-                print("havintolaltro")
-            self.deal()
-            self.round = self.round + 1
+        self.nextPlayer = self.players.index(winner["player"])
+
                 
     def twoPlayerEval(self) :
         return self.players[0].getPoints() - self.players[1].getPoints()
+
+    def remainingHands(self) :
+        return int(len(self.cards)/len(self.players))
     
-    def getCurrentPlayerHand(self):
-        return self.players[self.currentPlayer%len(self.players)].hand
+    def dumbPlayers(self) :
+        for p in self.players :
+            p.brute = False

@@ -9,4 +9,6 @@ p2 = Player("Luigi", board)
 for i in range(40):
     board.nextPlay()
 
+print("ha vinto " + str(board.eval()))
+
 print("test")

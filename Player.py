@@ -1,3 +1,4 @@
+from string import capwords
 from Card import Card
 
 
@@ -10,6 +11,12 @@ class Player:
         self.cardsWon = []
 
         board.assignPlayer(self)
+        
+    def getPoints(self) -> int:
+        points = 0
+        for c  in self.cardsWon:
+            points += c.getPointsValue()
+        return points
 
     def makeDumbMove(self, move=0) -> Card:
         """

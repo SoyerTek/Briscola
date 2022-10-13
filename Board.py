@@ -1,7 +1,7 @@
 import random
+import re
 from typing import OrderedDict
 
-from jellyfish import damerau_levenshtein_distance
 from Card import Card
 from Player import Player
 
@@ -58,9 +58,19 @@ class Board:
                     bestVal = val
                     best = pc
                     bestP = p
-            print(list(self.table.values()))
             bestP.cardsWon.extend(list(self.table.values()))
             self.startingPlayer = self.players.index(bestP)#winner starts next hand
             self.havePlayed = 0 #reset the number of players who have already played
             self.table = OrderedDict()
+    
+    def eval(self) -> int :
+        w = 0
+        i = 0
+        max = 0
+        for p in self.players:
+            i+=1
+            if max < p.getPoints() :
+                max = p.getPoints()
+                w=i
+        return w%2
                     

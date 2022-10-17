@@ -4,17 +4,20 @@ class Card:
         A card with its number=0..10
         and seed = "B", "C", "D", "S" 
         """
-        self.number = number
-        self.seed = seed
+        self._number = number
+        self._seed = seed
     
     def __str__(self):
-        return self.seed + str(self.number)
+        return self._seed + str(self._number)
+
+    def compare(self, card):
+        return self.getValue() - card.getValue()
     
     def getPointsValue(self) -> int:
         """
         returns the point value of the card
         """
-        match self.number:
+        match self._number:
             case 1 : return 11 #Asso
             case 3 : return 10 #Tre
             case 8 : return 2  #Fante
@@ -27,4 +30,12 @@ class Card:
         returns max(number, pointVal*10)
         """
         #110, 100, 40, 30, 20, 7, 6, 5, 4, 2
-        return max(self.number, self.getPointsValue() * 10)
+        return max(self._number, self.getPointsValue() * 10)
+    
+    @property
+    def number(self) -> int:
+        return self._number
+
+    @property
+    def seed(self):
+        return self._seed

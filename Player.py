@@ -1,20 +1,22 @@
+from copy import deepcopy
 from string import capwords
 from Card import Card
+from Strategy import DefaultStrategy
 
 
 class Player:
-    def __init__(self, name, board, strategy=0) -> None:
-        self.name = name
-        self.board = board
-        self.strategy = strategy
-        self.hand = []
-        self.cardsWon = []
+    def __init__(self, name, board, strategy=DefaultStrategy()) -> None:
+        self._name = name
+        self._board = board
+        self._strategy = strategy
+        self._hand = []
+        self._cardsWon = []
 
-        board.assignPlayer(self)
+        self._board.assignPlayer(self)
         
     def getPoints(self) -> int:
         points = 0
-        for c  in self.cardsWon:
+        for c  in self._cardsWon:
             points += c.getPointsValue()
         return points
 
@@ -23,9 +25,9 @@ class Player:
         Returns hands[move]
         move=0..len(self.hand)
         """
-        if move >= len(self.hand) :
-             raise Exception("Player: There are " + str(len(self.hand)) +" cards, "+str(move) + " was requested")
-        return self.hand.pop(move)
+        if move >= len(self._hand) :
+             raise Exception("Player: There are " + str(len(self._hand)) +" cards, "+str(move) + " was requested")
+        return self._hand.pop(move)
 
     def makeStrategicMove(self) -> Card:
         return self.makeDumbMove()
@@ -34,7 +36,21 @@ class Player:
         """
         Adds a card to the players hand
         """
-        if len(self.hand) >= 3 :
-            raise Exception("Player " + self.name + " is trying to draw more than 3 cards")
-        self.hand.append(card)
+        if len(self._hand) >= 3 :
+            raise Exception("Player " + self._name + " is trying to draw more than 3 cards")
+        self._hand.append(card)
         #self.hand.sort(key = lambda x: (0 if x.seed==self.board.briscola.seed else 1, x.seed, x.number))
+
+    def addCardWon(self, cards):
+        """
+        appends the list cards to self.cardsWon
+        """
+        self._cardsWon.extend(cards)
+
+    @property
+    def handLenght(self):
+        return len(self._hand)
+
+    @property
+    def hand(self):
+        return deepcopy(self._hand)

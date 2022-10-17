@@ -30,7 +30,7 @@ class Player:
         return self._hand.pop(move)
 
     def makeStrategicMove(self) -> Card:
-        return self.makeDumbMove()
+        return self.makeDumbMove(self._strategy.move(self._board))
 
     def addCardToHand(self, card):
         """

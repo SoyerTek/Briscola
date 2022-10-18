@@ -8,8 +8,9 @@ import time
 #simpleTest(DefaultStrategy(), SimpleStrategy())
 for i in range(5) :
     start_time = time.time()
-    steppedTest(200, 50, DefaultStrategy(), SimpleStrategy(), True)
+    results = steppedTest(200, 50, DefaultStrategy(), SimpleStrategy(), True)
 
     print("--- %s seconds ---" % str((time.time() - start_time)).replace(".", ","))
+    #print(results)
 
 

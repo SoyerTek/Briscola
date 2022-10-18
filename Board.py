@@ -80,9 +80,9 @@ class Board:
         i = 0
         max = 0
         for p in self._players:
-            i+=1
             if max < p.getPoints() :
                 max = p.getPoints()
                 w=i
+            i+=1
         return w%2
                     

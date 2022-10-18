@@ -1,13 +1,16 @@
 from Board import Board
 from Player import Player
+from StratTester import StratTester, simpleTest, steppedTest
 from Strategy import DefaultStrategy, SimpleStrategy
+import time
 
-board = Board()
-p1 = Player("Mario", board, DefaultStrategy())
-p2 = Player("Luigi", board, SimpleStrategy())
 
-for i in range(40):
-    board.nextPlay()
+#simpleTest(DefaultStrategy(), SimpleStrategy())
+for i in range(5) :
+    start_time = time.time()
+    results = steppedTest(200, 50, DefaultStrategy(), SimpleStrategy(), True)
 
-print("ha vinto " + str(board.eval()))
+    print("--- %s seconds ---" % str((time.time() - start_time)).replace(".", ","))
+    #print(results)
+
 

@@ -3,7 +3,7 @@ from unittest import result
 
 from Board import Board
 from Player import Player
-from Strategy import DefaultStrategy, SimpleStrategy, Strategy
+from Strategy import Strategy
 
 
 def simpleTest(p1Strategy : Strategy, p2Strategy : Strategy, verbose=False):

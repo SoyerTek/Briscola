@@ -1,7 +1,7 @@
 from abc import abstractmethod
+from copy import deepcopy
 from math import floor
 from random import randrange
-
 
 class Strategy :
     @abstractmethod
@@ -15,9 +15,61 @@ class MiniMaxStrategy(Strategy):
     Builds a tree of all possible moves from the current board onwords
     and chooses the best one for the current player
     """
-    def move(self, board):
-        return super().move()
+    
+    def __init__(self, depth=3) -> None:
+        self._maxDepth = depth
 
+    def move(self, board):
+        #if 
+        c =  MiniMaxStrategy.miniMax(board, board.getPlayersTeam(board.currentPlayer),\
+                                     self._maxDepth, [-1, -1000], [-1, 1000], True)[0]
+        return c
+    
+    @staticmethod
+    def miniMax(board, team, depth, alpha, beta, maximizingPlayer):
+        #print("team" + str(team) + " depth: " +str(depth) + " alpha: "+ str(alpha)+" beta: "+ str(beta)+ " maxing: "+str(maximizingPlayer))
+        """
+        returns index points
+        """
+        if board.isGameOver or depth==0:
+            #print("val: "+str(board.pointsEval(team)))
+            return [-1, board.pointsEval(team)]#tmpIndex, pointEval
+        
+        if maximizingPlayer:
+            maxEval = [-1, -1000]
+            for i in range(len(board.currentPlayer.hand)):
+                boardCopy = deepcopy(board)
+                #boardCopy.overrideStrategy(MiniMaxStrategy)#Likely to be unnecessary
+                boardCopy.nextPlay(i)
+                eval = MiniMaxStrategy.miniMax(boardCopy, team, depth-1, alpha, beta, False)
+                eval[0] = i
+                if eval[1] > maxEval[1]:
+                    maxEval = eval
+                if eval[1] > alpha[1]:
+                    alpha = eval
+                if beta[1] <= alpha[1]:
+                    break
+            return maxEval
+        else:
+            minEval = [-1, 1000]
+            for i in range(len(board.currentPlayer.hand)):
+                boardCopy = deepcopy(board)
+                #boardCopy.overrideStrategy(MiniMaxStrategy)
+                boardCopy.nextPlay(i)
+                eval = MiniMaxStrategy.miniMax(boardCopy, team, depth-1, alpha, beta, True)
+                eval[0] = i
+                if eval[1] < minEval[1]:
+                    minEval = eval
+                if eval[1] < beta[1]:
+                    beta = eval
+                if beta[1] <= alpha[1]:
+                    break
+            return minEval   
+
+    def __str__(self) -> str:
+        return self.__class__.__name__+"("+str(self._maxDepth)+")"         
+
+      
 class DefaultStrategy(Strategy):
     """
     Selects the first possible move

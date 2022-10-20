@@ -15,7 +15,12 @@ class Board:
         self._startingPlayer = 0
         self._havePlayed = 0#number of players who have played in the current hand
         self._table = OrderedDict() #ordered dictionary Player:card
+        self._turns = 0
         self.setupDeck()
+
+    @property
+    def isGameOver(self):
+        return self._turns==40
 
     @property
     def briscola(self) :
@@ -41,7 +46,7 @@ class Board:
         Registers a player
         """
         self._players.append(player)
-        for i in range(2):
+        for i in range(3):
             self.draw(player)
 
     def draw(self, player : Player):
@@ -52,11 +57,12 @@ class Board:
                 self._empty = True
                 player.addCardToHand(self._briscola)
 
-    def nextPlay(self):
+    def nextPlay(self, forcedMove=-1):
         player = self.currentPlayer
-        self.draw(player)
-        self._table[player] = player.makeStrategicMove()
+        self._table[player] = player.makeStrategicMove() if forcedMove==-1 \
+                              else player.makeDumbMove(forcedMove)
         self._havePlayed+=1
+        self._turns+=1
 
         if self._havePlayed%len(self._players) == 0: #all players have played
             best : Card = list(self._table.values())[0]
@@ -74,6 +80,12 @@ class Board:
             self._startingPlayer = self._players.index(bestP)#winner starts next hand
             self._havePlayed = 0 #reset the number of players who have already played
             self._table = OrderedDict()
+            
+            for i in range(len(self._players)):
+                p = self._players[(self._startingPlayer + i)%len(self._players)]
+                if p.needsToDraw: #sadcheck
+                    self.draw(p)
+                else: print("pointless draw")#TODO remove
     
     def eval(self) -> int :
         w = 0
@@ -85,4 +97,18 @@ class Board:
                 w=i
             i+=1
         return w%2
+
+    def pointsEval(self, team=-1) :
+        points = [0, 0]
+        i = 0
+        for p in self._players:
+            points[i%2] += p.getPoints()
+            i+=1
+        if team==-1 :
+            return points
+        else:
+            return points[team]
+    
+    def getPlayersTeam(self, player) -> int:
+        return self._players.index(player) % 2
                     

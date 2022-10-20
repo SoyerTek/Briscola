@@ -1,7 +1,7 @@
 from copy import deepcopy
 from string import capwords
 from Card import Card
-from Strategy import DefaultStrategy
+from Strategy import DefaultStrategy, Strategy
 
 
 class Player:
@@ -13,6 +13,10 @@ class Player:
         self._cardsWon = []
 
         self._board.assignPlayer(self)
+
+    @property
+    def needsToDraw(self):
+        return (len(self._hand) < 3)
         
     def getPoints(self) -> int:
         points = 0

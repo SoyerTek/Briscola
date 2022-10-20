@@ -13,6 +13,9 @@ class Card:
     def compare(self, card):
         return self.getValue() - card.getValue()
     
+    def __lt__(a,b):
+        return a.compare(b)
+
     def getPointsValue(self) -> int:
         """
         returns the point value of the card

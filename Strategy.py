@@ -39,6 +39,7 @@ class MiniMaxStrategy(Strategy):
             maxEval = [-1, -1000]
             for i in range(len(board.currentPlayer.hand)):
                 boardCopy = deepcopy(board)
+                boardCopy.setFriendlyness(False)
                 #boardCopy.overrideStrategy(MiniMaxStrategy)#Likely to be unnecessary
                 boardCopy.nextPlay(i)
                 eval = MiniMaxStrategy.miniMax(boardCopy, team, depth-1, alpha, beta, False)
@@ -54,6 +55,7 @@ class MiniMaxStrategy(Strategy):
             minEval = [-1, 1000]
             for i in range(len(board.currentPlayer.hand)):
                 boardCopy = deepcopy(board)
+                boardCopy.setFriendlyness(False)
                 #boardCopy.overrideStrategy(MiniMaxStrategy)
                 boardCopy.nextPlay(i)
                 eval = MiniMaxStrategy.miniMax(boardCopy, team, depth-1, alpha, beta, True)
@@ -125,40 +127,51 @@ class PrbabilityStrategy(Strategy):
     def move(self, board):
         return super().move()
     
-class SimpleStrategyV4(Strategy):
+class SimpleStrategyV5(Strategy):
     """
     Choses a move based on very simple rules:
     If first uses the card with the lowest value(briscole > others).
     Otherwise responds with the lowest card of the same seed that will win
     or the lowest briscola
     or the card with the lowest value
+    if there are any points on the table
     """
-    #As p1 Wins against SimpleStrategyV1,V3 
     def move(self, board):
         hand = board.currentPlayer.hand
         if len(board.table)==0 : #if it's the first player chooses the card with the lowest value(briscole > others).
             x = sorted(hand, key=lambda x: x.number*10 if x.seed==board.briscola.seed else x.number, reverse=True)
             return hand.index(x[len(x)-1])
-        else : #otherwise try to win with the lowest option
-            return SimpleStrategyV1().move(board)
-    
-class SimpleStrategyV3(Strategy):
-    """
-    Choses a move based on very simple rules:
-    If first uses the card with the highest value(briscole > others).
-    Otherwise responds with the lowest card of the same seed that will win
-    or the lowest briscola
-    or the card with the lowest value
-    """
-    #Never really wins
-    def move(self, board):
-        hand = board.currentPlayer.hand
-        if len(board.table)==0 : #if it's the first player chooses the highest value(briscole > others).
-            x = sorted(hand, key=lambda x: x.number*10 if x.seed==board.briscola.seed else x.number, reverse=True)
-            return hand.index(x[0])
-        else : #otherwise try to win with the lowest option
-            return SimpleStrategyV1().move(board)
-    
+        else : #otherwise try to win any points with the lowest option 
+            lowestBriscola=-1
+            lowestFirst=-1#the card with wich the turn started
+            lowestGeneral=-1
+            firstCard = list(board.table.values())[0]
+            hand = board.currentPlayer.hand
+            i=0
+            for card in hand:
+                lowestGeneral = i if lowestGeneral==-1 or card.compare(hand[lowestGeneral]) < 0 else lowestGeneral
+                if card.seed == firstCard.seed :
+                    if card.compare(firstCard) > 0 :
+                        if lowestFirst == -1 or card.compare(hand[lowestFirst]) < 0:
+                            lowestFirst = i
+                if card.seed == board._briscola.seed :
+                    lowestBriscola = i if lowestBriscola==-1 or card.compare(hand[lowestBriscola]) < 0 else lowestBriscola
+                i+=1
+            
+            tablePoints = 0
+            for c in board.table.values():
+                tablePoints+=c.getPointsValue()
+            if tablePoints == 0:
+                print("nopoint")
+                return lowestGeneral
+            if lowestFirst != -1 : 
+                return lowestFirst
+            elif lowestBriscola != -1 and firstCard.seed != board.briscola.seed:
+                return lowestBriscola
+            else: 
+                return lowestGeneral
+
+     
 class SimpleStrategyV2(Strategy):
     """
     Choses a move based on very simple rules:

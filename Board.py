@@ -20,6 +20,9 @@ class Board:
 
         self.setupDeck()
 
+    def setFriendlyness(self, f):
+        self._humanFriendly = f
+
     @property
     def isGameOver(self):
         return self._turns==40

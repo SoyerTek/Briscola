@@ -1,7 +1,7 @@
 from Board import Board
 from Player import Player
 from StratTester import StratTester, simpleTest, steppedTest
-from Strategy import DefaultStrategy, HumanStrategy, MiniMaxStrategy, SimpleStrategyV1, SimpleStrategyV2, SimpleStrategyV3, SimpleStrategyV4, Strategy
+from Strategy import DefaultStrategy, HumanStrategy, MiniMaxStrategy, SimpleStrategyV1, SimpleStrategyV2, SimpleStrategyV5, Strategy
 import time
 
 def stupiTest(strats, number):
@@ -32,5 +32,5 @@ def stupiTest(strats, number):
     #2.48 124,39 200-Sequential
 
 
-simpleTest(SimpleStrategyV2(), HumanStrategy(), 2)
+simpleTest(MiniMaxStrategy(10), HumanStrategy(), 2)
 #stupiTest([SimpleStrategyV2(), MiniMaxStrategy(5)], 250)

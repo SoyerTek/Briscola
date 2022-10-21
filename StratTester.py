@@ -6,19 +6,19 @@ from Player import Player
 from Strategy import Strategy
 
 
-def simpleTest(p1Strategy : Strategy, p2Strategy : Strategy, verbose=False):
+def simpleTest(p1Strategy : Strategy, p2Strategy : Strategy, verbose=0):
     """
     Execute 1 full game betwen p1Strategy and p2Strategy, verbose==True prints the result
     """
-    board = Board()
-    Player("Mario", board, p1Strategy)
-    Player("Luigi", board, p2Strategy)
+    board = Board(True if verbose==2 else False)
+    Player("Player0", board, p1Strategy)
+    Player("Player1", board, p2Strategy)
 
     for i in range(40):
         board.nextPlay()
     
-    if verbose == True:
-        print("ha vinto " + str(board.eval()))
+    if verbose >= 1:
+        print(board._players[board.eval()]._name+" wins!")
     
     return board.eval()
 
@@ -63,7 +63,7 @@ class StratTester(Thread):
         self._runs = runs
         self._p1Strat = p1Strategy
         self._p2Strat = p2Strategy
-        self._verbose = verbose
+        self._verbose = 1 if verbose else 0
         self._wonByP2 = 0
 
 

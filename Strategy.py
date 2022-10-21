@@ -69,7 +69,48 @@ class MiniMaxStrategy(Strategy):
     def __str__(self) -> str:
         return self.__class__.__name__+"("+str(self._maxDepth)+")"         
 
-      
+class HumanStrategy(Strategy):
+    def move(self, board):
+        if len(board.table)==0:
+            print(" You are the first")
+        else:
+            print(" Cards on the table:")
+            s ="  "
+            for c in board.table.values():
+                s+=str(c)+" "
+            print(s)
+
+        return HumanStrategy.cardInput(board.currentPlayer.hand)
+
+    @staticmethod
+    def cardInput(hand):
+        s =" "
+        for c in hand:
+            s+=str(c)+" "
+        print(" Your cards ["+s+"]")
+
+        rs = -1
+        while rs < 0 or rs > len(hand):
+            cc = input(" Choose your card(0..2 or B1)")
+            if len(cc) == 1:
+                try:
+                    rs = int(cc)
+                except:
+                    print(" Invalid input")
+                    rs = -1
+            elif len(cc) <= 3:
+                i=0
+                for c in hand:
+                    if str(c).lower() == cc.lower():
+                        rs = i
+                        break
+                    i+=1
+                if rs==-1: print(" Invalid input")
+            
+        return rs
+
+
+
 class DefaultStrategy(Strategy):
     """
     Selects the first possible move

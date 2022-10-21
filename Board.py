@@ -7,7 +7,7 @@ from Player import Player
 
 
 class Board:
-    def __init__(self) -> None:
+    def __init__(self, humanFriendly=False) -> None:
         self._players = []
         self._deck = []
         self._briscola = 0
@@ -16,6 +16,8 @@ class Board:
         self._havePlayed = 0#number of players who have played in the current hand
         self._table = OrderedDict() #ordered dictionary Player:card
         self._turns = 0
+        self._humanFriendly = humanFriendly
+
         self.setupDeck()
 
     @property
@@ -40,6 +42,8 @@ class Board:
                 self._deck.append(Card(i, s))
         random.shuffle(self._deck)
         self._briscola = self._deck.pop()
+        if self._humanFriendly :
+            print("The briscola is: "+str(self._briscola))
 
     def assignPlayer(self, player):
         """
@@ -63,6 +67,8 @@ class Board:
                               else player.makeDumbMove(forcedMove)
         self._havePlayed+=1
         self._turns+=1
+        if self._humanFriendly:
+            print("  "+player._name + " played "+str(self._table[player]))
 
         if self._havePlayed%len(self._players) == 0: #all players have played
             best : Card = list(self._table.values())[0]
@@ -80,6 +86,9 @@ class Board:
             self._startingPlayer = self._players.index(bestP)#winner starts next hand
             self._havePlayed = 0 #reset the number of players who have already played
             self._table = OrderedDict()
+            
+            if self._humanFriendly:
+                print(" "+bestP._name + " wins this hand.")
             
             for i in range(len(self._players)):
                 p = self._players[(self._startingPlayer + i)%len(self._players)]

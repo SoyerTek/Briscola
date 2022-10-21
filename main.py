@@ -7,7 +7,7 @@ import time
 def stupiTest(strats, number):
     for s1 in strats:
         for s2 in strats:
-            print(str(s1)+" vs " + str(s2))
+            print(str(s1)+" vs " + str(s2) +" "+ str(number)+" runs in " + str(int(number/5/5)) +" games ")
             avgs = []
             total = 0
             count = 0
@@ -18,8 +18,8 @@ def stupiTest(strats, number):
                 total+=sum(results)
                 count+=len(results)
 
-                #print("--- %s seconds ---" % str((time.time() - start_time)).replace(".", ","))
-                #print(results)
+                print(results)
+                print("--- %s seconds ---" % str((time.time() - start_time)).replace(".", ","))
 
             print(avgs)
             print(total/count)
@@ -33,4 +33,4 @@ def stupiTest(strats, number):
 
 
 #simpleTest(MiniMaxStrategy(1), MiniMaxStrategy(5), True)
-stupiTest([MiniMaxStrategy(1), MiniMaxStrategy(5)], 50)
+stupiTest([SimpleStrategyV2(), MiniMaxStrategy(5)], 250)

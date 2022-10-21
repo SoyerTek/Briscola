@@ -48,11 +48,8 @@ class Player:
         if len(self._hand) == 0:
             self._hand.append(card)
         else:
-            newVal = card.getValue() * 10 if card.seed == self._board.briscola.seed else 1
             for i in range(len(self.hand)):
-                c = self._hand[i]
-                val = c.getValue() * 10 if c.seed == self._board.briscola.seed else 1
-                if val < newVal:
+                if self._hand[i].getValue() < card.getValue():
                     break
             self._hand[i:i] = [card]
         #self.hand.sort(key = lambda x: (0 if x.seed==self.board.briscola.seed else 1, x.seed, x.number))

@@ -1,28 +1,28 @@
 from threading import Thread
-from unittest import result
 
 from Board import Board
 from Player import Player
 from Strategy import Strategy
 
 
-def simpleTest(p1Strategy : Strategy, p2Strategy : Strategy, verbose=0):
+def simpleTest(p1Strategy: Strategy, p2Strategy: Strategy, verbose=0):
     """
-    Execute 1 full game betwen p1Strategy and p2Strategy, verbose==True prints the result
+    Execute 1 full game betwen p1Strategy and p2Strategy, verbose==1 prints the result, 2 step by step
     """
-    board = Board(True if verbose==2 else False)
+    board = Board(verbose == 2)
     Player("Player0", board, p1Strategy)
     Player("Player1", board, p2Strategy)
 
     for i in range(40):
         board.nextPlay()
-    
+
     if verbose >= 1:
-        print(board._players[board.eval()]._name+" wins!")
-    
+        print(board._players[board.eval()]._name + " wins!")
+
     return board.eval()
 
-def steppedTest(runs, step, p1Strategy : Strategy, p2Strategy : Strategy, threaded=True, verbose=False):
+
+def steppedTest(runs, step, p1Strategy: Strategy, p2Strategy: Strategy, threaded=True, verbose=False):
     """
     Executes runs/step games betwen p1Strategy and p2Strategy,
     threaded==True executes them at the same time
@@ -30,22 +30,22 @@ def steppedTest(runs, step, p1Strategy : Strategy, p2Strategy : Strategy, thread
     """
     results = []
     threads = []
-    for i in range(int(runs/step)):
-        t = StratTester()
-        t.setup(step, p1Strategy, p2Strategy, verbose)
-        threads.append(t)
+    for i in range(int(runs / step)):
+        tester = StratTester()
+        tester.setup(step, p1Strategy, p2Strategy, verbose)
+        threads.append(tester)
 
-    if(threaded==True):
-        for t in threads:
-            t.start()
-        for t in threads:
-            t.join()
-            results.append(t.wonByP1)
+    if threaded == True:
+        for tester in threads:
+            tester.start()
+        for tester in threads:
+            tester.join()
+            results.append(tester.wonByP1)
     else:
-        for t in threads:
-            t.run()
-            results.append(t.wonByP1)
-    
+        for tester in threads:
+            tester.run()
+            results.append(tester.wonByP1)
+
     return results
 
 
@@ -53,19 +53,18 @@ class StratTester(Thread):
 
     @property
     def wonByP1(self):
-        return self._runs-self._wonByP2
-    
+        return self._runs - self._wonByP2
+
     @property
     def wonByP2(self):
         return self._wonByP2
 
-    def setup(self, runs, p1Strategy : Strategy, p2Strategy : Strategy, verbose=False):
+    def setup(self, runs, p1Strategy: Strategy, p2Strategy: Strategy, verbose=False):
         self._runs = runs
         self._p1Strat = p1Strategy
         self._p2Strat = p2Strategy
-        self._verbose = 1 if verbose else 0
+        self._verbose = int(verbose)
         self._wonByP2 = 0
-
 
     def run(self) -> None:
         for a in range(self._runs):

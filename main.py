@@ -25,12 +25,9 @@ def stupiTest(strats, number):
             print(total/count)
             print(total/(count*(number/5/5)))
 
-    #2,46 123,49 200-100-False
-    #2.47 123,81 200-20-False
-    #2,93 146,83 200-20-True
-    #2.87 143.64 200-100-True
-    #2.48 124,39 200-Sequential
-
-
-simpleTest(MiniMaxStrategy(10), HumanStrategy(), 2)
-#stupiTest([SimpleStrategyV2(), MiniMaxStrategy(5)], 250)
+        
+simpleTest(SimpleStrategyV5(), SimpleStrategyV5(), 2)
+start_time = time.time()
+#print(steppedTest(20, 5, SimpleStrategyV5(), SimpleStrategyV2(), True, True))
+print("--- %s seconds ---" % str((time.time() - start_time)).replace(".", ","))
+#stupiTest([SimpleStrategyV2(), MiniMaxStrategy()], 250)

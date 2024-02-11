@@ -2,7 +2,7 @@ class Card:
     def __init__(self, number=0, seed="") -> None:
         """
         A card with its number=0..10
-        and seed = "B", "C", "D", "S" 
+        and seed = _B_astoni, _C_oppe, _D_enari, _S_pade 
         """
         self._number = number
         self._seed = seed

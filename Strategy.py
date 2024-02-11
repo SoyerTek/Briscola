@@ -125,12 +125,12 @@ class PrbabilityStrategy(Strategy):
     Choses a move based on probability of it winning, based on drawn cards, previous hands, etc..
     """
     def move(self, board):
-        return super().move()
+        return super().move() #TODO 
     
 class SimpleStrategyV5(Strategy):
     """
     Choses a move based on very simple rules:
-    If first uses the card with the lowest value(briscole > others).
+    If first use the card with the lowest value(briscole > others).
     Otherwise responds with the lowest card of the same seed that will win
     or the lowest briscola
     or the card with the lowest value
@@ -204,7 +204,7 @@ class SimpleStrategyV1(Strategy):
             return 0
         else : #otherwise try to win with the lowest option
             lowestBriscola=-1
-            lowestFirst=-1#the card with wich the turn started
+            lowestOfSeed=-1 #the card with wich the round started
             lowestGeneral=-1
             firstCard = list(board.table.values())[0]
             hand = board.currentPlayer.hand

@@ -1,9 +1,7 @@
 
-import bisect
 from copy import deepcopy
-from string import capwords
 from Card import Card
-from Strategy import DefaultStrategy, Strategy
+from Strategy import DefaultStrategy
 
 
 class Player:
@@ -28,7 +26,7 @@ class Player:
 
     def makeDumbMove(self, move=0) -> Card:
         """
-        Returns hands[move]
+        Returns hand[move]
         move=0..len(self.hand)
         """
         if move >= len(self._hand) :
@@ -36,6 +34,11 @@ class Player:
         return self._hand.pop(move)
 
     def makeStrategicMove(self) -> Card:
+        """
+        Returns hand[move]
+        move=0..len(self.hand) 
+        move is chosen according to _strategy
+        """
         return self.makeDumbMove(self._strategy.move(self._board))
 
     def addCardToHand(self, card):
